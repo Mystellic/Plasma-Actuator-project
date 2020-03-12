@@ -30,7 +30,9 @@ def SplitFolder(folder):
     return lowFiles, highFiles, end - start
 
 def AverageThis(arrays):
-    return np.mean(arrays)
+    sm = np.sum(arrays,axis=0)
+    average = sm/len(arrays)
+    return average
 
 def FileToArray(reynolds):
     newArray = []
@@ -44,7 +46,7 @@ path = 'C:\\Test, Analysis & Simulation DATA\\AE2223\\FFS_PA1\\t200\\IR\\R00\\Fu
 low,high,time = SplitFolder(path)
 
 s=timer()
-test = np.shape(FileToArray(low))
+test = AverageThis(FileToArray(low))
 e=timer()
 
-print(test,e-s)
+print(test,np.shape(test),e-s)
