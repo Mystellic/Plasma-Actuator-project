@@ -17,6 +17,7 @@ def RunFile(fileName):
     data = np.nan_to_num(np.array(data))
     return data
 
+#this function splits the folders in half
 def SplitFolder(folder):
     start = timer()
     files = np.array([])
@@ -37,15 +38,13 @@ def FileToArray(reynolds):
         newPart = RunFile(element)
         newArray.append(newPart)
         useArray = np.array(newArray)
-        return useArray
+    return useArray
     
 path = 'C:\\Test, Analysis & Simulation DATA\\AE2223\\FFS_PA1\\t200\\IR\\R00\\Full'
 low,high,time = SplitFolder(path)
 
 s=timer()
-
+test = np.shape(FileToArray(low))
 e=timer()
 
-print(LowAverage,e-s)
-
-
+print(test,e-s)
