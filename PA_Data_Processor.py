@@ -49,16 +49,30 @@ def HighLowCorrection(high,low):
 #begin of main program
 path = 'C:\\Test, Analysis & Simulation DATA\\AE2223\\FFS_PA1\\t200\\IR\\R01\\Full'
 low,high,time = SplitFolder(path)
-
-notepad1_path = 'C:\\Test, Analysis & Simulation DATA\\AE2223\\FFS_PA1\\'
+'''
+notepad1_path = 'C:\\Users\\hugo pc\\Documents\\GitHub\\Plasma-Actuator-project\\R00\\Full'
 notepad1 = pd.read_csv(notepad1_path + 'Master_M3J_PA1.txt', header=None)
 print(notepad1)
-
+'''
 lowArray = AverageThis(FileToArray(low))
 highArray = AverageThis(FileToArray(high))
 
 s=timer()
 #test = HighLowCorrection(highArray,lowArray)
 e=timer()
+
+def CountourArray(h):
+    levels = []
+    a = 0
+    Min = np.amin(h)
+    Max = np.amax(h)
+    Range = Max - abs(Min)
+    for i in range(Range + 1):
+        levels.append(a)
+        a += 1
+    fig, ax = plt.subplots()
+    ax.contourf(h, levels)
+    ax.set_title("hi")
+    plt.show()
 
 #print(test,np.shape(test),e-s)
