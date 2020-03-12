@@ -41,12 +41,24 @@ def FileToArray(reynolds):
         newArray.append(newPart)
         useArray = np.array(newArray)
     return useArray
-    
-path = 'C:\\Test, Analysis & Simulation DATA\\AE2223\\FFS_PA1\\t200\\IR\\R00\\Full'
+
+#find the difference between the high and low reynolds numbers files
+def HighLowCorrection(high,low):
+    return high - low
+
+#begin of main program
+path = 'C:\\Test, Analysis & Simulation DATA\\AE2223\\FFS_PA1\\t200\\IR\\R01\\Full'
 low,high,time = SplitFolder(path)
 
+notepad1_path = 'C:\\Test, Analysis & Simulation DATA\\AE2223\\FFS_PA1\\'
+notepad1 = pd.read_csv(notepad1_path + 'Master_M3J_PA1.txt', header=None)
+print(notepad1)
+
+lowArray = AverageThis(FileToArray(low))
+highArray = AverageThis(FileToArray(high))
+
 s=timer()
-test = AverageThis(FileToArray(low))
+#test = HighLowCorrection(highArray,lowArray)
 e=timer()
 
-print(test,np.shape(test),e-s)
+#print(test,np.shape(test),e-s)
