@@ -1,5 +1,0 @@
-This is a simple test to show who can enter the documents:
-
-Robin was here
-And Neil too
-hugo was here too
