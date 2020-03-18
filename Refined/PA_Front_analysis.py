@@ -19,12 +19,14 @@ def ReadInfo(filename):
     return infographic
 
 def ReadData(folder):
+    #This method retrieves the names of all files in a certain folder
     files = np.array([])
     for name in glob.glob(folder + '\\*'):
         files = np.append(files,name)
     return files
 
 def FileToArray(fileThing):
+    #This method takes in a file and creates an array out of it, the files are read by another function used here
     newArray = []
     for element in fileThing:
         newPart = RunFile(element)
@@ -33,6 +35,7 @@ def FileToArray(fileThing):
     return useArray
 
 def RunFile(fileName):
+    #This function is used in the FileToArray function and reads a file and creates a simple array
     file_list = np.array([])
     data = pd.read_csv(fileName,header=None)
     data = np.nan_to_num(np.array(data))
@@ -40,17 +43,19 @@ def RunFile(fileName):
 
     
 def CreateImage(pixelFrame):
+    #Levels are created by having a set amount of levels between the min and max of the pixel values
     levels = np.linspace(np.amin(pixelFrame),np.amax(pixelFrame),30) 
     plt.contourf(pixelFrame,levels,cmap='nipy_spectral')
     plt.show()
 
 def CleanCorrection(pictureArray,cleanInfo,allInfo):
     for i in range(pictureArray):
-        #check which clean case needs to be subtracted
+        #check which clean case needs to be subtracted 'Unfinished'
     
     return CorrectedArray
 
 def GenerateClean(info):
+    #This function finds the clean cases and puts the number of the test and the day in a list
     clean = [0,0,0]
     for element in info:
         if element[2] == element[3] == 0:
@@ -58,15 +63,12 @@ def GenerateClean(info):
             clean[element[6]-1] = series_day
 
 def main():
+    #generate the info lists from the .txt's
     info1 = ReadInfo('Info_PA1.txt')
     info2 = ReadInfo('Info_PA2.txt')
     info3 = ReadInfo('Info_PA3.txt')
     
-    
     cleanCases = GenerateClean(info1)
-    
-    
-            
     
 
 main()
