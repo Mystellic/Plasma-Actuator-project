@@ -51,16 +51,22 @@ def CreateImage(pixelFrame):
 def CleanCorrection(pictureArray,cleanInfo,allInfo):
     for i in range(pictureArray):
         #check which clean case needs to be subtracted 'Unfinished'
-    
-    return CorrectedArray
+        return CorrectedArray
 
 def GenerateClean(info):
     #This function finds the clean cases and puts the number of the test and the day in a list
+    #Same is done for "dirty" cases so it is known what to subtract from
     clean = [0,0,0]
+    dirty = []
     for element in info:
         if element[2] == element[3] == 0:
             series_day = [int(element[0][1:]),element[6]]
             clean[element[6]-1] = series_day
+        else:
+            series_day = [int(element[0][1:]),element[6]]
+            dirty.append(series_day)
+    return clean, dirty
+        
 
 def main():
     #generate the info lists from the .txt's
@@ -68,12 +74,9 @@ def main():
     info2 = ReadInfo('Info_PA2.txt')
     info3 = ReadInfo('Info_PA3.txt')
     
-    cleanCases = GenerateClean(info1)
-    
-
-main()
-    
+    cleanCases, dirtyCases = GenerateClean(info1)
+    print("clean: " ,cleanCases, "dirty: " , dirtyCases)    
         
-
+main()
 #PA1 = FileToArray(ReadData('PA1'))
 #CreateImage(PA1[0])
