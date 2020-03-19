@@ -48,10 +48,17 @@ def CreateImage(pixelFrame):
     plt.contourf(pixelFrame,levels,cmap='nipy_spectral')
     plt.show()
 
-def CleanCorrection(pictureArray,cleanInfo,allInfo):
-    for i in range(pictureArray):
+def CleanCorrection(pictureArray,cleanInfo,dirtyInfo):
+    correctedArray = []
+    for dirty in dirtyInfo:
+        for clean in cleanInfo:
+            if dirty[1] == clean[1]:
+                newArray = pictureArray[int(dirty[0])] - pictureArray[int(clean[0])]
+                correctedArray.append(newArray)
+                
         #check which clean case needs to be subtracted 'Unfinished'
-        return CorrectedArray
+    correctedArray = np.array(correctedArray)
+    return correctedArray
 
 def GenerateClean(info):
     #This function finds the clean cases and puts the number of the test and the day in a list
@@ -69,14 +76,18 @@ def GenerateClean(info):
         
 
 def main():
+
     #generate the info lists from the .txt's
     info1 = ReadInfo('Info_PA1.txt')
     info2 = ReadInfo('Info_PA2.txt')
     info3 = ReadInfo('Info_PA3.txt')
     
-    cleanCases, dirtyCases = GenerateClean(info1)
-    print("clean: " ,cleanCases, "dirty: " , dirtyCases)    
-        
+    #Change PA1 as a string to PA2 or PA3 to look at those instead
+    pictureArray = FileToArray(ReadData('PA2'))
+    cleanCases, dirtyCases = GenerateClean(info2)    
+    pictures = CleanCorrection(pictureArray,cleanCases,dirtyCases)
+    CreateImage(pictures[0])
+
 main()
 #PA1 = FileToArray(ReadData('PA1'))
 #CreateImage(PA1[0])
