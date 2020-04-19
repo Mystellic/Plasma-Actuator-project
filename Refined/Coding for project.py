@@ -43,7 +43,7 @@ def RunFile(fileName):
 def CreateImage(pixelFrame,i):#pixelFrame2,Array,i):
     #Levels are created by having a set amount of levels between the min and max of the pixel values
     levels = np.linspace(np.amin(pixelFrame),np.amax(pixelFrame),30) 
-    plt.contourf(pixelFrame,levels,cmap= 'gray')#'RdGy')#'nipy_spectral')
+    plt.contourf(pixelFrame,levels,cmap= 'gist_gray')#'RdGy')#'nipy_spectral')
     #plt.plot(Array[i],np.arange(0,428),'ro')
     
     #xx = np.arange(0,428)
@@ -55,6 +55,8 @@ def CreateImage(pixelFrame,i):#pixelFrame2,Array,i):
     ax.xaxis.tick_top()                     # and move the X-Axis      
     ax.yaxis.tick_left() 
     plt.show()
+    
+    
 
 def f(x,i,pixel_grad):
     fx = linearregression(pixel_grad)[1,i] + linearregression(pixel_grad)[2,i]*x
@@ -156,10 +158,17 @@ def thresholdadaptive(Array):
     #src = cv.imread(Array)
     #src = np.full((38, 428, 598), 12, np.uint8)
     #src = mpimg.imread()
-    img = cv.cvtColor(Array, cv.COLOR_BGR2GRAY)
-    Im = cv.adaptiveThreshold(img,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,11,2)
-    return Im
+    
+    grayArray = cv.cvtColor(Array, cv.COLOR_BGR2GRAY)
+    
+    blockSize = 11
+    subtractConstant = 4
 
+    #fill in the Array here
+    img = cv.adaptiveThreshold(grayArray,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,\
+            cv.THRESH_BINARY,blockSize,subtractConstant)
+    
+    return img
     
 #------------------------------------------------#------------------------------------------------------------
 
@@ -191,7 +200,7 @@ def main():
     for i in range(len(pictureArray)):
         print(slicing(pictureArray).shape)
         #CreateImage(pictures[i],gradient(pictures),index_of_trans,i)  #Added by me
-        CreateImage(thresholdadaptive(pictures[i]))
+        CreateImage(pictures[i],i)
     
     
 main()
