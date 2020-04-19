@@ -7,6 +7,7 @@ import os
 from scipy import ndimage
 from sklearn.linear_model import LinearRegression
 import cv2 as cv
+from PIL import Image
 
 def ReadInfo(filename):
     #imports notepad
@@ -40,26 +41,31 @@ def RunFile(fileName):
     return data
 
     
-def CreateImage(pixelFrame,i):#pixelFrame2,Array,i):
+def CreateImage(pixelFrame,pixelFrame2,Array,i):
     #Levels are created by having a set amount of levels between the min and max of the pixel values
     levels = np.linspace(np.amin(pixelFrame),np.amax(pixelFrame),30) 
-    plt.contourf(pixelFrame,levels,cmap= 'gist_gray')#'RdGy')#'nipy_spectral')
-    #plt.plot(Array[i],np.arange(0,428),'ro')
+    plt.contourf(pixelFrame,levels,cmap= 'gray')#'RdGy')#'nipy_spectral')
+    plt.plot(Array,np.arange(0,428),'ro')
+    #plt.plot(Array[i],np.arange(0,428),'ro')      For 38 pictures
     
-    #xx = np.arange(0,428)
-    #plt.plot(f(xx,i,gradient(pixelFrame2)), xx)
+    xx = np.arange(0,428)
+    plt.plot(f(xx,i,pixelFrame2), xx)
     
 
     ax=plt.gca()
     ax.set_ylim(ax.get_ylim()[::-1])        # invert the axis
     ax.xaxis.tick_top()                     # and move the X-Axis      
-    ax.yaxis.tick_left() 
+    ax.yaxis.tick_left()
+    plt.axis('off')
+    plt.gca().xaxis.set_major_locator(plt.NullLocator())
+    plt.gca().yaxis.set_major_locator(plt.NullLocator())
+    #plt.imsave('picture[0]3',pixelFrame)
     plt.show()
-    
-    
 
 def f(x,i,pixel_grad):
-    fx = linearregression(pixel_grad)[1,i] + linearregression(pixel_grad)[2,i]*x
+    fx = linearregression(pixel_grad)[1] + linearregression(pixel_grad)[2]*x
+    #For 38 pictures
+    #fx = linearregression(pixel_grad)[1,i] + linearregression(pixel_grad)[2,i]*x
     return fx
 
 def CleanCorrection(pictureArray,cleanInfo,dirtyInfo):
@@ -98,12 +104,9 @@ def slicing(pictureArray):
     return zoom_picture                          # of shape 428*598
 
 
-#def threshold(Array):
-
-
 def gradient(pictureArray):
     
-    gradient_PA = np.gradient(pictureArray, axis = 1)
+    gradient_PA = np.gradient(pictureArray, axis = 0)#axis = 1)
     
     return np.array(gradient_PA)
 
@@ -113,7 +116,7 @@ def maxelement(Array):
     transition_per_picture =[]
     
     for i in range(len(Array)):
-        max_value_per_row = np.amin(Array[i],axis=1)  #Selected maximum value per row
+        max_value_per_row = np.amax(Array[i],axis = 0)#axis=1)  #Selected maximum value per row
         transition_per_picture.append(max_value_per_row)
         
     return np.array(transition_per_picture)
@@ -122,7 +125,7 @@ def indexofmax(Array):
     index_of_max = []
 
     for i in range(len(Array)):
-        index = np.argmin(Array[i],axis = 1) #Index of max value
+        index = np.argmax(Array[i],axis = 0)#axis = 1) #Index of max value
         index_of_max.append(index)
     return np.array(index_of_max)
 
@@ -138,7 +141,7 @@ def linearregression(Array):
     a_0list = []
     a_1list = []                                            # Function for least
     r_sqlist = []                                           # squares linear regression
-   
+    '''
     for k in range(len(Array)):
         y = indexofmax(gradient(Array))[k].reshape((-1,1))
         model = LinearRegression().fit(x,y)
@@ -151,24 +154,25 @@ def linearregression(Array):
         a_1list.append(float(a_1))
 
     output = [np.array(r_sqlist),np.array(a_0list),np.array(a_1list)]
-        
+    '''
+    y = indexofmax(gradient(Array)).reshape((-1,1))
+    model = LinearRegression().fit(x,y)
+    r_sq = model.score(x,y)
+    a_0 = model.intercept_
+    a_1 = model.coef_
+    
+    r_sqlist.append(r_sq)
+    a_0list.append(float(a_0))
+    a_1list.append(float(a_1))
+    output = [np.array(r_sqlist),np.array(a_0list),np.array(a_1list)]
     return np.array(output)
 
-def thresholdadaptive(Array):
-    #src = cv.imread(Array)
-    #src = np.full((38, 428, 598), 12, np.uint8)
-    #src = mpimg.imread()
+def arrayconvert(Array):
     
-    grayArray = cv.cvtColor(Array, cv.COLOR_BGR2GRAY)
-    
-    blockSize = 11
-    subtractConstant = 4
+    temp= np.asarray(Image.open(Array))
+    temp1 = np.mean(temp,axis = 2)
+    return temp1
 
-    #fill in the Array here
-    img = cv.adaptiveThreshold(grayArray,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,\
-            cv.THRESH_BINARY,blockSize,subtractConstant)
-    
-    return img
     
 #------------------------------------------------#------------------------------------------------------------
 
@@ -184,24 +188,30 @@ def main():
     
     pictureArray = FileToArray(ReadData('PA2'))
     cleanCases, dirtyCases = GenerateClean(info2)
-    pictures = slicing(pictureArray)
+    pictures2 = slicing(pictureArray)
+    pictures = 'threshold1.png'
+    pictures1 = arrayconvert(pictures)
     
-    index_of_trans = indexofmax(gradient(pictures))
-    index_trans = indexofmax(pictures)
-           
+    index_of_trans = indexofmax(gradient(pictures1))
+    #index_trans = indexofmax(pictures)
+          
     #pictures = CleanCorrection(pictureArray,cleanCases,dirtyCases)
   
-    #print(linearregression(gradient(pictures)))
-   
-    #CreateImage(pictures[0])
+    print(linearregression(gradient(pictures1)))
+    print(index_of_trans)
+    
     #print(CleanCorrection(pictureArray,cleanCases,dirtyCases))
-    
-    
+   
+    CreateImage(pictures2[0],gradient(pictures1),index_of_trans,0)
+    '''
     for i in range(len(pictureArray)):
         print(slicing(pictureArray).shape)
+        CreateImage(pictures2[0],gradient(pictures1),index_of_trans,i)
         #CreateImage(pictures[i],gradient(pictures),index_of_trans,i)  #Added by me
-        CreateImage(pictures[i],i)
-    
+        print(gradient(pictures1).shape)
+        #CreateImage(gradient(pictures1))
+   '''
+       
     
 main()
 #PA1 = FileToArray(ReadData('PA1'))
