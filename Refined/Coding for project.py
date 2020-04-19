@@ -13,9 +13,10 @@ def ReadInfo(filename):
     #imports notepad
     try:
         infographic = np.array(pd.read_csv(filename, sep = "\t"))
+        return infographic
     except:
         print("File was not found")
-    return infographic
+    
 
 def ReadData(folder):
     #This method retrieves the names of all files in a certain folder
@@ -189,10 +190,13 @@ def main():
     pictureArray = FileToArray(ReadData('PA2'))
     cleanCases, dirtyCases = GenerateClean(info2)
     pictures2 = slicing(pictureArray)
+    
+    '''
     pictures = 'threshold1.png'
     pictures1 = arrayconvert(pictures)
     
     index_of_trans = indexofmax(gradient(pictures1))
+    
     #index_trans = indexofmax(pictures)
           
     #pictures = CleanCorrection(pictureArray,cleanCases,dirtyCases)
@@ -204,6 +208,8 @@ def main():
    
     CreateImage(pictures2[0],gradient(pictures1),index_of_trans,0)
     '''
+    
+    '''
     for i in range(len(pictureArray)):
         print(slicing(pictureArray).shape)
         CreateImage(pictures2[0],gradient(pictures1),index_of_trans,i)
@@ -214,5 +220,5 @@ def main():
        
     
 main()
-#PA1 = FileToArray(ReadData('PA1'))
-#CreateImage(PA1[0])
+PA1 = FileToArray(ReadData('PA1'))
+CreateImage(PA1[0])
