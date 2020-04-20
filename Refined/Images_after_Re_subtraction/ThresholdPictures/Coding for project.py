@@ -227,13 +227,13 @@ def main():
 
     #generate the info lists from the .txt's
     
-    #info1 = ReadInfo('Info_PA1.txt')
+    info1 = ReadInfo('Info_PA1.txt')
     #info2 = ReadInfo('Info_PA2.txt')
     #info3 = ReadInfo('Info_PA3.txt')
     
     #Change PA1 as a string to PA2 or PA3 to look at those instead
     
-    #pictureArray = FileToArray(ReadData('PA1'))
+    pictureArray = FileToArray(ReadData('PA1'))
 
 
     '''
@@ -260,21 +260,19 @@ def main():
     #print(index_of_trans.shape)   
     #pictures = CleanCorrection(pictureArray,cleanCases,dirtyCases)
   
-    print(pictures1)
-    print(pictures1.shape)
     
     #print(CleanCorrection(pictureArray,cleanCases,dirtyCases))
    
     #CreateImage(pictures2[0],gradient(pictures1),index_of_trans,0)
-    '''
-    for i in range(len(pictureArray)):
+
+    for i in range(len(pictures)):
         print(slicing(pictureArray).shape)
         #CreateImage(pictures2[0],gradient(pictures1),index_of_trans,i)
         #CreateImage(pictures[i],gradient(pictures),index_of_trans,i)  #Added by me
         #print(gradient(pictures1).shape)
         #CreateImage(gradient(pictures1))
         CreateImage(pictures2[i],i)
-    '''
+
        
     
 main()
