@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Apr 17 14:01:28 2020
-
 @author: Robin
 """
 
@@ -58,6 +57,3 @@ Images = 'HighminusLow' + PA
 for file in glob.glob('Images_after_Re_subtraction\\' + Images + '\\*'):
     i = file[-6:-4]
     ThresholdOnPicture(file,i)
-
-
-
