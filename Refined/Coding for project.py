@@ -13,9 +13,10 @@ def ReadInfo(filename):
     #imports notepad
     try:
         infographic = np.array(pd.read_csv(filename, sep = "\t"))
+        return infographic
     except:
         print("File was not found")
-    return infographic
+    
 
 def ReadData(folder):
     #This method retrieves the names of all files in a certain folder
