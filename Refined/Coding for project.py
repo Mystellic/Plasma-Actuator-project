@@ -45,28 +45,31 @@ def RunFile(fileName):
 def CreateImage(pixelFrame,pixelFrame2,Array,i):
     #Levels are created by having a set amount of levels between the min and max of the pixel values
     levels = np.linspace(np.amin(pixelFrame),np.amax(pixelFrame),30) 
-    plt.contourf(pixelFrame,levels,cmap= 'RdGy')#'gray')#'nipy_spectral')
-    plt.plot(Array,np.arange(0,428),'ro')
-    #plt.plot(Array[i],np.arange(0,428),'ro')      For 38 pictures
+    plt.contourf(pixelFrame,levels,cmap= 'RdGy')#'nipy_spectral')#'gray'
+    #plt.plot(Array,np.arange(0,428),'ro')
+    plt.plot(Array[i],np.arange(0,428),'ro')     #725 #For all pictures
     
-    xx = np.arange(0,428)
-    plt.plot(f(xx,i,pixelFrame2), xx)
+    #xx = np.arange(0,428)
+    #plt.plot(f(xx,i,pixelFrame2), xx)
     
-    name = str(i)
+    #name = str(i)
+    
     ax=plt.gca()
     ax.set_ylim(ax.get_ylim()[::-1])        # invert the axis
     ax.xaxis.tick_top()                     # and move the X-Axis      
     ax.yaxis.tick_left()
     plt.axis('off')
+    plt.title(i)
     plt.gca().xaxis.set_major_locator(plt.NullLocator())
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    #plt.imsave(name,pixelFrame, cmap = 'RdGy')
+    
+    #plt.imsave(name,pixelFrame, cmap = 'gray')
     plt.show()
 
 def f(x,i,pixel_grad):
-    fx = linearregression(pixel_grad)[1] + linearregression(pixel_grad)[2]*x
+    #fx = linearregression(pixel_grad)[1] + linearregression(pixel_grad)[2]*x
     #For 38 pictures
-    #fx = linearregression(pixel_grad)[1,i] + linearregression(pixel_grad)[2,i]*x
+    fx = linearregression(pixel_grad)[1,i] + linearregression(pixel_grad)[2,i]*x
     return fx
 
 def CleanCorrection(pictureArray,cleanInfo,dirtyInfo):
@@ -95,8 +98,7 @@ def GenerateClean(info):
             dirty.append(series_day)
     return clean, dirty
 
-
-#----------------------------------------------------
+#Written by Sofia----------------------------------------------------
 
 
 def slicing(pictureArray):
@@ -108,8 +110,8 @@ def slicing(pictureArray):
 
 def gradient(pictureArray):
     
-    gradient_PA = np.gradient(pictureArray, axis = 0)#axis = 1)
-    gaussian_filter = ndimage.gaussian_filter(gradient_PA, sigma = 1)
+    gradient_PA = np.gradient(pictureArray, axis = 1)#axis = 0)
+    gaussian_filter = ndimage.gaussian_filter(gradient_PA, sigma = 0)
     return np.array(gaussian_filter)
 
 
@@ -120,7 +122,7 @@ def maxelement(Array):
     transition_per_picture =[]
     
     for i in range(len(Array)):
-        max_value_per_row = np.amax(Array[i],axis = 0)#axis=1)  #Selected maximum value per row
+        max_value_per_row = np.amax(Array[i],axis = 1)#axis=0)  #Selected maximum value per row
         transition_per_picture.append(max_value_per_row)
         
     return np.array(transition_per_picture)
@@ -131,7 +133,7 @@ def indexofmax(Array):
     index_of_max = []
 
     for i in range(len(Array)):
-        index = np.argmax(Array[i],axis = 0)#axis = 1) #Index of max value
+        index = np.argmax(Array[i],axis = 1)#axis = 0) #Index of max value
         index_of_max.append(index)
     index_of_max = np.array(index_of_max)
 
@@ -141,7 +143,26 @@ def indexofmax(Array):
     
 def standarddevi(Array):
     #Function aims to eliminate the outliers of
-    #the max gradient location
+    #the max gradient location and being able to plot it
+    ArrayCorrected = []
+    Finallist = []
+    for m in range(len(Array)):
+        mean = np.mean(Array[m],axis=0)#axis = 1
+        sd = np.std(Array[m], axis=0) #axis = 1
+
+        x = Array[m] > (mean-sd)   # First condition
+        y = Array[m] < (mean+sd)   #Second condition
+        Array1 = np.where(x,Array[m],np.nan)
+        Array2 = np.where(y,Array1, np.nan)
+
+        final_list = [x for x in Array[m] if (x > mean - sd)]
+        final_list = [x for x in final_list if (x < mean + sd)]
+        Finallist.append(np.array(final_list))
+        ArrayCorrected.append(Array2)
+    ArrayCorrected = np.array(ArrayCorrected)
+    Finallist = np.array(Finallist)
+    '''
+    #For one picture
     
     mean = np.mean(Array,axis=0)#axis = 1
     sd = np.std(Array, axis=0) #axis = 1
@@ -150,8 +171,9 @@ def standarddevi(Array):
     y = Array < (mean+sd)   #Second condition
     Array1 = np.where(x,Array,np.nan)
     Array2 = np.where(y,Array1, np.nan)
-    
-    return Array2
+    '''
+    return ArrayCorrected,Finallist
+
 
 def rotating_pic(Array):
     #This functions rotates the picture 45 deg
@@ -167,7 +189,7 @@ def linearregression(Array):
     r_sqlist = []                                           # squares linear regression
 
     #For all the pictures, therefore s 3D array
-    '''
+    
     for k in range(len(Array)):
         y = indexofmax(gradient(Array))[k].reshape((-1,1))
         model = LinearRegression().fit(x,y)
@@ -182,6 +204,7 @@ def linearregression(Array):
     output = [np.array(r_sqlist),np.array(a_0list),np.array(a_1list)]
     '''
     #For one picture only, therefore a 2D array
+    
     y = indexofmax(gradient(Array)).reshape((-1,1))
     model = LinearRegression().fit(x,y)
     r_sq = model.score(x,y)
@@ -192,8 +215,9 @@ def linearregression(Array):
     a_0list.append(float(a_0))
     a_1list.append(float(a_1))
     output = [np.array(r_sqlist),np.array(a_0list),np.array(a_1list)]
+    '''
     return np.array(output)
-
+    
 def arrayconvert(Array):
     #This function converts a picture into an array
     templist = []
@@ -204,11 +228,12 @@ def arrayconvert(Array):
         templist.append(temp1)
     templist = np.array(templist)
     return templist
+    
 
-def DeltaTransition(pictureArray,info):
+def FinalDeltaTransition(pictureArray,info):
 
 
-    #Gives final delta transition.
+    #Gives delta transition.
     #Inputs: 3D Array of transition location points( # of pics, one row, 428 columns)
     #Output: 3D Array with delta transition (one per row)
     
@@ -218,9 +243,11 @@ def DeltaTransition(pictureArray,info):
     
     return DeltaTransition
 
-def FinalDeltaTransition(Array):
+def AveragingTransition(Array):
 
-    FinalDeltaTransition = np.mean(Array, axis = 1) #Check after    
+    FinalDeltaTransition = np.mean(Array, axis = 0)#axis = 1 Check after
+    return FinalDeltaTransition
+
 #------------------------------------------------#------------------------------------------------------------
 
 def main():
@@ -229,11 +256,12 @@ def main():
     
     #info1 = ReadInfo('Info_PA1.txt')
     #info2 = ReadInfo('Info_PA2.txt')
-    #info3 = ReadInfo('Info_PA3.txt')
+    info3 = ReadInfo('Info_PA3.txt')
     
     #Change PA1 as a string to PA2 or PA3 to look at those instead
     
-    #pictureArray = FileToArray(ReadData('PA1'))
+    pictureArray = FileToArray(ReadData('PA3'))
+
 
 
     '''
@@ -243,39 +271,45 @@ def main():
     After this is just running it through the functions already written
     to get the transition points and linear regression.
 
-    Try rotating the pictures. Take the mean of the transition points to
+    Take the mean of the transition points to
     get an averaged transition location
 
     Subtract the clean cases from the PA cases
 
     '''
     
-    #cleanCases, dirtyCases = GenerateClean(info2)
-    #pictures2 = slicing(pictureArray)
-    pictures = ReadData('ThresholdPA1')
+    pictures2 = slicing(pictureArray)
+    pictures = ReadData('ThresholdPA3')  #Change to PA1, PA2, PA3
     pictures1 = arrayconvert(pictures)
-    
-    #index_of_trans = standarddevi(indexofmax(gradient(pictures1)))
-    #index_trans = indexofmax(pictures)
-    #print(index_of_trans.shape)   
-    #pictures = CleanCorrection(pictureArray,cleanCases,dirtyCases)
-  
-    print(pictures1)
-    print(pictures1.shape)
-    
-    #print(CleanCorrection(pictureArray,cleanCases,dirtyCases))
+
+    ArrayCorrected, Final = standarddevi(indexofmax(gradient(pictures1)))
+
    
-    #CreateImage(pictures2[0],gradient(pictures1),index_of_trans,0)
+      
+    
     '''
-    for i in range(len(pictureArray)):
-        print(slicing(pictureArray).shape)
-        #CreateImage(pictures2[0],gradient(pictures1),index_of_trans,i)
-        #CreateImage(pictures[i],gradient(pictures),index_of_trans,i)  #Added by me
-        #print(gradient(pictures1).shape)
-        #CreateImage(gradient(pictures1))
-        CreateImage(pictures2[i],i)
+    CreateImage(pictures2[37],gradient(pictures1),ArrayCorrected,37)            #To Produce only one picture
+    CreateImage(gradient(pictures1)[37],gradient(pictures1),ArrayCorrected,37)  #To produce the picture of the gradient of
+                                                                                the threshold pics
     '''
+    Averagedtransition = []
+    
+    for i in range(len(pictures1)):
+        
+        CreateImage(pictures2[i],gradient(pictures1),ArrayCorrected,i) #To plot image with transition points on
+        
+        Averaged_transition  = AveragingTransition(Final[i])     # To average the transition location
+        Averagedtransition.append(np.array(Averaged_transition))
        
+    Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
+
+    DeltaTransition = FinalDeltaTransition(Averagedtransition,info3)
+    print('The Delta Transition are:',DeltaTransition)
+    print()
+    print(Averagedtransition)
+    print(Averagedtransition.shape)
+    
+    
     
 main()
 #PA1 = FileToArray(ReadData('PA1'))
