@@ -231,7 +231,7 @@ def arrayconvert(Array):
     
 
 def FinalDeltaTransition(pictureArray,info):
-
+    
 
     #Gives delta transition.
     #Inputs: 3D Array of transition location points( # of pics, one row, 428 columns)
@@ -244,7 +244,10 @@ def FinalDeltaTransition(pictureArray,info):
     return DeltaTransition
 
 def AveragingTransition(Array):
-
+    #This function averages the transition points, giving one
+    #transition location(This is still a position on the array
+    #not a physical distance to the leading edge)
+    
     FinalDeltaTransition = np.mean(Array, axis = 0)#axis = 1 Check after
     return FinalDeltaTransition
 
@@ -277,14 +280,13 @@ def main():
     Subtract the clean cases from the PA cases
 
     '''
-    
+    Threshold_pics = 'Images_after_Re_subtraction\\ThresholdPictures\\'
     pictures2 = slicing(pictureArray)
-    pictures = ReadData('ThresholdPA3')  #Change to PA1, PA2, PA3
+    pictures = ReadData(Threshold_pics + 'ThresholdPA3')  #Change to PA1, PA2, PA3
     pictures1 = arrayconvert(pictures)
 
     ArrayCorrected, Final = standarddevi(indexofmax(gradient(pictures1)))
-
-   
+    
       
     
     '''
@@ -296,19 +298,17 @@ def main():
     
     for i in range(len(pictures1)):
         
-        CreateImage(pictures2[i],gradient(pictures1),ArrayCorrected,i) #To plot image with transition points on
+        #CreateImage(pictures2[i],gradient(pictures1),ArrayCorrected,i) #To plot image with transition points on
         
         Averaged_transition  = AveragingTransition(Final[i])     # To average the transition location
         Averagedtransition.append(np.array(Averaged_transition))
-       
+     
     Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
 
-    DeltaTransition = FinalDeltaTransition(Averagedtransition,info3)
+    DeltaTransition = FinalDeltaTransition(Averagedtransition,info3) 
     print('The Delta Transition are:',DeltaTransition)
     print()
-    print(Averagedtransition)
-    print(Averagedtransition.shape)
-    
+    print(DeltaTransition.shape)
     
     
 main()
