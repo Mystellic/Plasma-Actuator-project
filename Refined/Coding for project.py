@@ -291,19 +291,17 @@ def main():
 
     #generate the info lists from the .txt's
     
-<<<<<<< HEAD
+
     info1 = ReadInfo('Info_PA1.txt')
     info2 = ReadInfo('Info_PA2.txt')
     info3 = ReadInfo('Info_PA3.txt')
-=======
-    #info1 = ReadInfo('Info_PA1.txt')
-    #info2 = ReadInfo('Info_PA2.txt')
-    info = ReadInfo('Info_PA3.txt')
->>>>>>> 15f30ec15ad69dcd85d32944cd6bc5086472d869
+
+    
+#>>>>>>> 15f30ec15ad69dcd85d32944cd6bc5086472d869
     
     #Change PA1 as a string to PA2 or PA3 to look at those instead
     
-    pictureArray = FileToArray(ReadData('PA1'))
+    pictureArray = FileToArray(ReadData('PA3'))
 
     
 
@@ -324,7 +322,7 @@ def main():
     '''
     Threshold_pics = 'Images_after_Re_subtraction\\ThresholdPictures\\'
     pictures2 = slicing(pictureArray)
-    pictures = ReadData(Threshold_pics + 'ThresholdPA1')  #Change to PA1, PA2, PA3
+    pictures = ReadData(Threshold_pics + 'ThresholdPA3')  #Change to PA1, PA2, PA3
     pictures1 = arrayconvert(pictures)
 
     ArrayCorrected, Final = standarddevi(indexofmax(gradient(pictures1)))
@@ -345,22 +343,21 @@ def main():
         Averaged_transition  = AveragingTransition(Final[i],i)     # To average the transition location
         Averagedtransition.append(np.array(Averaged_transition))
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
     
     Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
   
     
-    DeltaTransition = FinalDeltaTransition(Averagedtransition,info1)  #Change to info1 or info2 or info3 
+    DeltaTransition = FinalDeltaTransition(Averagedtransition,info3)  #Change to info1 or info2 or info3 
     print('The Delta Transition are:',DeltaTransition,'cm')
-=======
-    DeltaTransition = FinalDeltaTransition(Averagedtransition,info) 
-    print('The Delta Transition are:',DeltaTransition)
->>>>>>> 15f30ec15ad69dcd85d32944cd6bc5086472d869
     print()
     print(DeltaTransition.shape)
     print()
+
+#>>>>>>> 15f30ec15ad69dcd85d32944cd6bc5086472d869
     
-    frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12 = PrePlotTables(info,DeltaTransition)
+    
+    frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12 = PrePlotTables(info3,DeltaTransition)
     
     plt.figure
     plt.subplot(231)
