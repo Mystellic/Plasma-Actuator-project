@@ -322,7 +322,7 @@ def main():
     '''
     Threshold_pics = 'Images_after_Re_subtraction\\ThresholdPictures\\'
     pictures2 = slicing(pictureArray)
-    pictures = ReadData(Threshold_pics + 'ThresholdPA3')  #Change to PA1, PA2, PA3
+    pictures = ReadData(Threshold_pics + 'ThresholdPA1')  #Change to PA1, PA2, PA3
     pictures1 = arrayconvert(pictures)
 
     ArrayCorrected, Final = standarddevi(indexofmax(gradient(pictures1)))
@@ -343,7 +343,6 @@ def main():
         Averaged_transition  = AveragingTransition(Final[i],i)     # To average the transition location
         Averagedtransition.append(np.array(Averaged_transition))
 
-#<<<<<<< HEAD
     
     Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
   
@@ -353,8 +352,6 @@ def main():
     print()
     print(DeltaTransition.shape)
     print()
-
-#>>>>>>> 15f30ec15ad69dcd85d32944cd6bc5086472d869
     
     
     frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12 = PrePlotTables(info3,DeltaTransition)
@@ -362,28 +359,28 @@ def main():
     plt.figure
     plt.subplot(231)
     plt.plot(frequency4,delta4)
-    plt.xlabel('Frequency')
-    plt.ylabel('Delta Transition')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Delta Transition (cm)')
     plt.title('Volatage = 4V')
     plt.subplot(232)
     plt.plot(frequency6,delta6)
-    plt.xlabel('Frequency')
-    plt.ylabel('Delta Transition')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Delta Transition (cm)')
     plt.title('Volatage = 6V')
     plt.subplot(233)
     plt.plot(frequency8,delta8)
-    plt.xlabel('Frequency')
-    plt.ylabel('Delta Transition')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Delta Transition (cm)')
     plt.title('Volatage = 8V')
     plt.subplot(234)
     plt.plot(frequency10,delta10)
-    plt.xlabel('Frequency')
-    plt.ylabel('Delta Transition')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Delta Transition (cm)')
     plt.title('Volatage = 10V')
     plt.subplot(235)
     plt.plot(frequency12,delta12)
-    plt.xlabel('Frequency')
-    plt.ylabel('Delta Transition')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Delta Transition (cm)')
     plt.title('Volatage = 12V')
     plt.show()
     
