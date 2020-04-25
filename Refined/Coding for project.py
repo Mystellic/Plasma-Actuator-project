@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from math import *
 import numpy as np
 import pandas as pd
 import glob
@@ -49,8 +50,8 @@ def CreateImage(pixelFrame,pixelFrame2,Array,i):
     #plt.plot(Array,np.arange(0,428),'ro')
     plt.plot(Array[i],np.arange(0,428),'ro')     #725 #For all pictures
     
-    #xx = np.arange(0,428)
-    #plt.plot(f(xx,i,pixelFrame2), xx)
+    xx = np.arange(0,428)
+    plt.plot(f(xx,i,pixelFrame2), xx)
     
     #name = str(i)
     
@@ -67,9 +68,9 @@ def CreateImage(pixelFrame,pixelFrame2,Array,i):
     plt.show()
 
 def f(x,i,pixel_grad):
-    #fx = linearregression(pixel_grad)[1] + linearregression(pixel_grad)[2]*x
+    fx = linearregression(pixel_grad)[1] + linearregression(pixel_grad)[2]*x
     #For 38 pictures
-    fx = linearregression(pixel_grad)[1,i] + linearregression(pixel_grad)[2,i]*x
+    #fx = linearregression(pixel_grad)[1,i] + linearregression(pixel_grad)[2,i]*x
     return fx
 
 def CleanCorrection(pictureArray,cleanInfo,dirtyInfo):
@@ -159,19 +160,10 @@ def standarddevi(Array):
         final_list = [x for x in final_list if (x < mean + sd)]
         Finallist.append(np.array(final_list))
         ArrayCorrected.append(Array2)
+        
     ArrayCorrected = np.array(ArrayCorrected)
     Finallist = np.array(Finallist)
-    '''
-    #For one picture
-    
-    mean = np.mean(Array,axis=0)#axis = 1
-    sd = np.std(Array, axis=0) #axis = 1
-
-    x = Array > (mean-sd)   # First condition
-    y = Array < (mean+sd)   #Second condition
-    Array1 = np.where(x,Array,np.nan)
-    Array2 = np.where(y,Array1, np.nan)
-    '''
+   
     return ArrayCorrected,Finallist
 
 
@@ -183,29 +175,14 @@ def rotating_pic(Array):
 
 def linearregression(Array):
     
-    x = np.arange(0,428).reshape((-1,1))
+    x = np.arange(0,Array.shape[0]).reshape((-1,1))
     a_0list = []
     a_1list = []                                            # Function for least
     r_sqlist = []                                           # squares linear regression
-
-    #For all the pictures, therefore s 3D array
-    
-    for k in range(len(Array)):
-        y = indexofmax(gradient(Array))[k].reshape((-1,1))
-        model = LinearRegression().fit(x,y)
-        r_sq = model.score(x,y)
-        a_0 = model.intercept_   # y = a_0 +a_1*x
-        a_1 = model.coef_
-        
-        r_sqlist.append(r_sq)
-        a_0list.append(float(a_0))
-        a_1list.append(float(a_1))
-
-    output = [np.array(r_sqlist),np.array(a_0list),np.array(a_1list)]
-    '''
+   
     #For one picture only, therefore a 2D array
     
-    y = indexofmax(gradient(Array)).reshape((-1,1))
+    y = Array.reshape((-1,1))     #indexofmax(gradient(Array)).reshape((-1,1))
     model = LinearRegression().fit(x,y)
     r_sq = model.score(x,y)
     a_0 = model.intercept_
@@ -215,7 +192,7 @@ def linearregression(Array):
     a_0list.append(float(a_0))
     a_1list.append(float(a_1))
     output = [np.array(r_sqlist),np.array(a_0list),np.array(a_1list)]
-    '''
+    
     return np.array(output)
     
 def arrayconvert(Array):
@@ -235,20 +212,27 @@ def FinalDeltaTransition(pictureArray,info):
 
     #Gives delta transition.
     #Inputs: 3D Array of transition location points( # of pics, one row, 428 columns)
-    #Output: 3D Array with delta transition (one per row)
+    #Output: 3D Array with delta transition (one per row) scaled to a physical distance
+    #       on the wing and considering sweep as well
     
     cleanCases, dirtyCases = GenerateClean(info)
 
     DeltaTransition = CleanCorrection(pictureArray,cleanCases,dirtyCases)
+    DeltaTransition = 0.2123745819*DeltaTransition          #Gives delta transition in centimeters
+                                                            #One matrix unit is 0.2123745 cm
+    DeltaTransition = DeltaTransition/cos((45*np.pi)/180)  #Considering sweep
     
     return DeltaTransition
 
-def AveragingTransition(Array):
+def AveragingTransition(Array,i):
     #This function averages the transition points, giving one
     #transition location(This is still a position on the array
     #not a physical distance to the leading edge)
+
+    xx = np.arange(0,428)
+    fx = f(xx,i,Array)
     
-    FinalDeltaTransition = np.mean(Array, axis = 0)#axis = 1 Check after
+    FinalDeltaTransition = np.mean(fx, axis = 0)#axis = 1 Check after
     return FinalDeltaTransition
 
 #------------------------------------------------#------------------------------------------------------------
@@ -257,15 +241,15 @@ def main():
 
     #generate the info lists from the .txt's
     
-    #info1 = ReadInfo('Info_PA1.txt')
-    #info2 = ReadInfo('Info_PA2.txt')
+    info1 = ReadInfo('Info_PA1.txt')
+    info2 = ReadInfo('Info_PA2.txt')
     info3 = ReadInfo('Info_PA3.txt')
     
     #Change PA1 as a string to PA2 or PA3 to look at those instead
     
-    pictureArray = FileToArray(ReadData('PA3'))
+    pictureArray = FileToArray(ReadData('PA1'))
 
-
+    
 
     '''
     Taking all of the threshholded pictures of PA1, PA2,PA3 and put them into a
@@ -279,38 +263,41 @@ def main():
 
     Subtract the clean cases from the PA cases
 
+    Scale up with the wing dimensions and take into account the 45 degree sweep
+
     '''
     Threshold_pics = 'Images_after_Re_subtraction\\ThresholdPictures\\'
     pictures2 = slicing(pictureArray)
-    pictures = ReadData(Threshold_pics + 'ThresholdPA3')  #Change to PA1, PA2, PA3
+    pictures = ReadData(Threshold_pics + 'ThresholdPA1')  #Change to PA1, PA2, PA3
     pictures1 = arrayconvert(pictures)
 
     ArrayCorrected, Final = standarddevi(indexofmax(gradient(pictures1)))
+
     
-      
     
-    '''
-    CreateImage(pictures2[37],gradient(pictures1),ArrayCorrected,37)            #To Produce only one picture
-    CreateImage(gradient(pictures1)[37],gradient(pictures1),ArrayCorrected,37)  #To produce the picture of the gradient of
-                                                                                the threshold pics
-    '''
+    
+    #CreateImage(pictures2[53],gradient(pictures1),ArrayCorrected,53)            #To Produce only one picture
+    #CreateImage(gradient(pictures1)[53],gradient(pictures1),ArrayCorrected,53)  #To produce the picture of the gradient of
+                                                                                #the threshold pics
+    
     Averagedtransition = []
     
     for i in range(len(pictures1)):
         
-        #CreateImage(pictures2[i],gradient(pictures1),ArrayCorrected,i) #To plot image with transition points on
+        #CreateImage(pictures2[i],Final[i],ArrayCorrected,i) #To plot image with transition points on
         
-        Averaged_transition  = AveragingTransition(Final[i])     # To average the transition location
+        Averaged_transition  = AveragingTransition(Final[i],i)     # To average the transition location
         Averagedtransition.append(np.array(Averaged_transition))
-     
-    Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
 
-    DeltaTransition = FinalDeltaTransition(Averagedtransition,info3) 
-    print('The Delta Transition are:',DeltaTransition)
+    
+    Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
+  
+    
+    DeltaTransition = FinalDeltaTransition(Averagedtransition,info1)  #Change to info1 or info2 or info3 
+    print('The Delta Transition are:',DeltaTransition,'cm')
     print()
     print(DeltaTransition.shape)
     
     
 main()
-#PA1 = FileToArray(ReadData('PA1'))
-#CreateImage(PA1[0])
+
