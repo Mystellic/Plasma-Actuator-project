@@ -26,7 +26,7 @@ def RunFile(number):
     if len(number) < 3:
         number = '0' + number
     
-    fileName = 'R00\\data_'+number+'.txt'
+    fileName = 'R09\\data_'+number+'.txt'
 
     data = pd.read_csv(fileName, sep='\t', header=None )
     data = np.nan_to_num(np.array(data))[:,1]
@@ -52,8 +52,16 @@ def Contour_Array():
 
 
 #print (Contour_Array())
+def Plotting(Array):
 
+    fig = plt.figure(figsize=(6,5))
+    left, bottom, width, height = 0.1, 0.1, 0.8, 0.8
+    ax = fig.add_axes([left, bottom, width, height]) 
+    ax.set_title('Contour Plot')
+    ax.set_xlabel('z')
+    ax.set_ylabel('y')
+    cp = plt.contourf(Array)
+    plt.colorbar(cp)
+    plt.plot
 
-plt.contour(Contour_Array())
-plt.plot
-print(Average(RunFile(1)))
+Plotting(Contour_Array())
