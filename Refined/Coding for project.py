@@ -147,7 +147,7 @@ def PrePlotTables(info,deltas):
     return frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12
             
 
-#Written by Sofia, Mustafa, Keiy and Serena----------------------------------------------------
+#Written by Sofia, Mustafa, Keiya and Serena----------------------------------------------------
 
 
 def slicing(pictureArray):
