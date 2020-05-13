@@ -11,7 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 from scipy.signal import butter, lfilter, sosfilt, sosfreqz
-
+import time
 
 path = "E:\\Downloads\\raw"
 os.chdir( path )
@@ -177,18 +177,17 @@ def Filtered_Contour_Array(Data_Set):
     
   return rows
 
-def Filtered_Plot(Set):
+def Filtered_Plot(Set,Frequency):
     
   
    row = np.empty((29,0))
 
 
-   for j in range(0,35): 
-      print("First Point")
+   for j in range(0,35):
       collumn = np.zeros(shape=(29,1))
       for i in range(1,30):
          n = i+(j)*30
-         collumn[29-i,0] = np.std(Filter((RunFile(n,Set)),200))
+         collumn[29-i,0] = np.std(Filter((RunFile(n,Set)),Frequency))
       row = np.hstack((collumn,row))
    
    row = np.flipud(row)
@@ -233,10 +232,14 @@ def Run():
     plt.xlabel('Frequency [rad/sample]')
     plt.ylabel('Amplitude [dB]')
     plt.plot()
-
+    
+start = time.time()    
+plt.figure()
 nz, ny = (35, 29)
 z = np.linspace(0, 16, nz)
 y = np.linspace(0, 2, ny)
 zv, yv = np.meshgrid(z, y)
-cp = plt.contourf(zv,yv,Filtered_Plot('R01'))
+cp = plt.contourf(zv,yv,Filtered_Plot('R01',600))
 cb = plt.colorbar(cp)
+end = time.time()
+print(end - start)
