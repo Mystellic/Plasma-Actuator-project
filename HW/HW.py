@@ -184,10 +184,11 @@ def Filtered_Plot(Set):
 
 
    for j in range(0,35): 
+      print("First Point")
       collumn = np.zeros(shape=(29,1))
       for i in range(1,30):
          n = i+(j)*30
-         collumn[29-i,0] = Standard_Deviation(Filter(RunFile(n,Set),200))
+         collumn[29-i,0] = np.std(Filter((RunFile(n,Set)),200))
       row = np.hstack((collumn,row))
    
    row = np.flipud(row)
@@ -233,6 +234,9 @@ def Run():
     plt.ylabel('Amplitude [dB]')
     plt.plot()
 
-
-plt.plot(Filtered_Plot('R01'))
-
+nz, ny = (35, 29)
+z = np.linspace(0, 16, nz)
+y = np.linspace(0, 2, ny)
+zv, yv = np.meshgrid(z, y)
+cp = plt.contourf(zv,yv,Filtered_Plot('R01'))
+cb = plt.colorbar(cp)
