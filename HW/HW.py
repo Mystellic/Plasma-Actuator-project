@@ -10,6 +10,8 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import ticker
+from scipy.signal import butter, lfilter, sosfilt, sosfreqz
+
 
 path = "E:\\Downloads\\raw"
 os.chdir( path )
@@ -119,5 +121,118 @@ def Plotting(Array,PA,Frequency):
     
     plt.savefig('PA'+str(PA)+'_Freq'+str(Frequency)+ '.png', bbox_inches='tight')
     
-Plotting(Contour_Array(Get_Data(2,1000)),2,1000)
+#Plotting(Contour_Array(Get_Data(2,1000)),2,1000)
+
+
+def butter_bandpass(lowcut, highcut, fs, order):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    sos = butter(order, [low, high], btype='band', output='sos')
+    return sos
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order):
+    sos = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = sosfilt(sos, data)
+    return y
+
+def Standard_Deviation(List):
+    x = 0
+    for i in List:
+        x = x + (i-Average(List))**2
+    s = np.sqrt(x/(len(List)-1))
+    return s
+
+def Filter(data,Frequency):
+    fs = 51200
+    lowcut = Frequency-3
+    highcut = Frequency+3
+    order = 3
+    Extension = 40000
+    front = data[0:Extension]
+    back = data[102400-Extension:102400]
+    data = np.hstack((front,data,back)) 
+    filter = butter_bandpass_filter(data,lowcut,highcut,fs,order)
+    return filter[Extension:102399+Extension]
+
+
+
+def Filtered_Contour_Array(Data_Set):
+  rows = []
+  for k in Data_Set:
+   row = np.empty((29,0))
+
+
+   for j in range(0,35): 
+      collumn = np.zeros(shape=(29,1))
+      for i in range(1,30):
+         n = i+(j)*30
+         collumn[29-i,0] = Standard_Deviation(Filter(RunFile(n,k),400))
+      row = np.hstack((collumn,row))
+   
+   row = np.flipud(row)
+   row = np.fliplr(row)
+   rows.append(row)
+    
+  return rows
+
+def Filtered_Plot(Set):
+    
+  
+   row = np.empty((29,0))
+
+
+   for j in range(0,35): 
+      collumn = np.zeros(shape=(29,1))
+      for i in range(1,30):
+         n = i+(j)*30
+         collumn[29-i,0] = Standard_Deviation(Filter(RunFile(n,Set),200))
+      row = np.hstack((collumn,row))
+   
+   row = np.flipud(row)
+   row = np.fliplr(row)
+   
+    
+   return row
+
+
+#Plotting(Filtered_Contour_Array(Get_Data(2,1000)),2,1000)
+
+def Run():
+    data = pd.read_csv('R00\data_1010.txt', sep='\t', header=None )
+    data = np.nan_to_num(np.array(data))[1:,1]
+
+    
+    Extension = 40000
+    front = data[0:Extension]
+    back = data[102400-Extension:102400]
+    data = np.hstack((front,data,back))  
+    print(len(data))
+    filter = Filter(data, 600)
+    time = np.linspace(0,2,51200*2-1)
+    w, h = sosfreqz(butter_bandpass(597,603,51200,6))
+                    
+    plt.figure()
+    plt.subplot(311)
+    plt.subplots_adjust(hspace = 0.5)
+    plt.plot(time,data[Extension:102399+Extension])
+    plt.xlabel('Measured HW Signal')
+    plt.plot()
+    
+    plt.subplot(312)
+    plt.subplots_adjust(hspace = 0.5)
+    plt.plot(time, filter[Extension:102399+Extension])
+    plt.xlabel('Filtered HW Signal (600 Hz)')
+    plt.plot()
+    
+    plt.subplot(313)
+    
+    plt.plot(w, 20 * np.log10(abs(h)))
+    plt.xlabel('Frequency [rad/sample]')
+    plt.ylabel('Amplitude [dB]')
+    plt.plot()
+
+
+plt.plot(Filtered_Plot('R01'))
 
