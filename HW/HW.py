@@ -262,7 +262,8 @@ def Plot_All_filterfrequencies(Set):
       plt.ylabel('y [mm]', fontsize = 'small')
       if index > 1:
           plt.subplots_adjust( wspace  = 0.03,hspace = 0.8)
-      cp = plt.contourf(zv,yv,Filtered_Plot(Set,j))
+      Levels = np.linspace(0,0.1,num=10, endpoint=True,)
+      cp = plt.contourf(zv,yv,Filtered_Plot(Set,j),Levels)
       cb = plt.colorbar(cp)
       tick_locator = ticker.MaxNLocator(nbins=5)
       cb.locator = tick_locator
@@ -276,5 +277,11 @@ def Plot_All_filterfrequencies(Set):
     end = time.time()
 
     print(end - start)
-Plot_All_filterfrequencies('R01')
+    
+Cases1 = ['R01']#,'R04','R35','R03','R06','R37']
+Cases2 = ['R05','R15','R28','R36','R12','R32']
+
+for case in Cases1:
+    
+  Plot_All_filterfrequencies(case)
 
