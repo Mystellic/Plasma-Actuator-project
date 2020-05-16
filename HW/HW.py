@@ -263,7 +263,7 @@ def Plot_All_filterfrequencies(Set):
       if index > 1:
           plt.subplots_adjust( wspace  = 0.03,hspace = 0.8)
       Levels = np.linspace(0,0.1,num=20, endpoint=True,)
-      cp = plt.contourf(zv,yv,Filtered_Plot(Set,j),Levels)
+      cp = plt.contourf(zv,yv,Filtered_Plot(Set,j),Levels,extend = 'both')
       cb = plt.colorbar(cp)
       tick_locator = ticker.MaxNLocator(nbins=5)
       cb.locator = tick_locator
