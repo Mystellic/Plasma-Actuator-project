@@ -18,6 +18,10 @@ os.chdir( path )
 
 
 def RunFile(number, Set):
+    if Set == 'R03' and number >1001:
+        number = int(number)-90
+    if Set =='R37':
+        number = int(number)+891
     number =str(number)
     Set = str(Set)
     if len(number) < 2:
@@ -49,6 +53,17 @@ def Get_Data(PA_Number, Frequency):
             elif data[i,2] == '0.2':
                 Data_Set[2] = data[i,0]
     return Data_Set
+
+def Get_Conditions(Set):
+    data = pd.read_csv('matrix.txt', sep='\t', header=None )
+    data = np.nan_to_num(np.array(data))
+    for i in range(0,40):
+        if data[i,0] == Set:
+            PA = data[i,1]
+            Chord = data[i,2]
+            Frequency = data[i,3]
+    return PA, Chord, Frequency
+    
 
 def Contour_Array(Data_Set):
   rows = []
@@ -137,12 +152,7 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order):
     y = sosfilt(sos, data)
     return y
 
-def Standard_Deviation(List):
-    x = 0
-    for i in List:
-        x = x + (i-Average(List))**2
-    s = np.sqrt(x/(len(List)-1))
-    return s
+
 
 def Filter(data,Frequency):
     fs = 51200
@@ -168,7 +178,7 @@ def Filtered_Contour_Array(Data_Set):
       collumn = np.zeros(shape=(29,1))
       for i in range(1,30):
          n = i+(j)*30
-         collumn[29-i,0] = Standard_Deviation(Filter(RunFile(n,k),400))
+         collumn[29-i,0] = np.std(Filter(RunFile(n,k),400))
       row = np.hstack((collumn,row))
    
    row = np.flipud(row)
@@ -204,7 +214,7 @@ def Run():
     data = np.nan_to_num(np.array(data))[1:,1]
 
     
-    Extension = 40000
+    Extension = 50000
     front = data[0:Extension]
     back = data[102400-Extension:102400]
     data = np.hstack((front,data,back))  
@@ -233,13 +243,38 @@ def Run():
     plt.ylabel('Amplitude [dB]')
     plt.plot()
     
-start = time.time()    
-plt.figure()
-nz, ny = (35, 29)
-z = np.linspace(0, 16, nz)
-y = np.linspace(0, 2, ny)
-zv, yv = np.meshgrid(z, y)
-cp = plt.contourf(zv,yv,Filtered_Plot('R01',600))
-cb = plt.colorbar(cp)
-end = time.time()
-print(end - start)
+def Plot_All_filterfrequencies(Set):    
+    Frequencies= [50,100,200,300,400,500,600,800,1000,1200,1400,1600,1800,2000,2500,3000]    
+    PA, Chord, Frequency = Get_Conditions(Set) 
+    f = plt.figure()
+    plt.suptitle('Filtered Standard Deviation PA='+ str(PA)+' ,Chord=' + str(Chord)+' ,Frequency=' + str(Frequency)+'Hz',fontsize = 'xx-large', y=0.93)
+    nz, ny = (35, 29)
+    z = np.linspace(0, 16, nz)
+    y = np.linspace(0, 2, ny)
+    zv, yv = np.meshgrid(z, y)
+    index = 1
+    start = time.time()
+    for j in Frequencies:
+      plt.subplot(8,2,index)
+      f.set_figheight(16)
+      f.set_figwidth(16)     
+      plt.xlabel('z [mm]', fontsize = 'small')
+      plt.ylabel('y [mm]', fontsize = 'small')
+      if index > 1:
+          plt.subplots_adjust( wspace  = 0.03,hspace = 0.8)
+      cp = plt.contourf(zv,yv,Filtered_Plot(Set,j))
+      cb = plt.colorbar(cp)
+      tick_locator = ticker.MaxNLocator(nbins=5)
+      cb.locator = tick_locator
+      cb.update_ticks()
+      plt.title(str(j)+' Hz')
+      plt.plot()
+      
+      index = index +1
+    plt.savefig('Filter_Plot_PA'+str(PA)+'_Chord'+str(Chord)+'_Freq'+str(Frequency)+ '.png', bbox_inches='tight')
+    plt.close(f)
+    end = time.time()
+
+    print(end - start)
+Plot_All_filterfrequencies('R01')
+
