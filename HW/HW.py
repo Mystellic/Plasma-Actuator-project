@@ -247,7 +247,7 @@ def Plot_All_filterfrequencies(Set):
     Frequencies= [50,100,200,300,400,500,600,800,1000,1200,1400,1600,1800,2000,2500,3000]    
     PA, Chord, Frequency = Get_Conditions(Set) 
     f = plt.figure()
-    plt.suptitle('Filtered Standard Deviation PA='+ str(PA)+' ,Chord=' + str(Chord)+' ,Frequency=' + str(Frequency)+'Hz',fontsize = 'xx-large', y=0.93)
+    plt.suptitle('Filtered Standard Deviation PA'+ str(PA)+' ,Chord=' + str(Chord)+' ,Frequency=' + str(Frequency)+'Hz',fontsize = 'xx-large', y=0.93)
     nz, ny = (35, 29)
     z = np.linspace(0, 16, nz)
     y = np.linspace(0, 2, ny)
@@ -262,7 +262,7 @@ def Plot_All_filterfrequencies(Set):
       plt.ylabel('y [mm]', fontsize = 'small')
       if index > 1:
           plt.subplots_adjust( wspace  = 0.03,hspace = 0.8)
-      Levels = np.linspace(0,0.1,num=10, endpoint=True,)
+      Levels = np.linspace(0,0.1,num=20, endpoint=True,)
       cp = plt.contourf(zv,yv,Filtered_Plot(Set,j),Levels)
       cb = plt.colorbar(cp)
       tick_locator = ticker.MaxNLocator(nbins=5)
