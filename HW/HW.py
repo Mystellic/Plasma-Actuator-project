@@ -278,10 +278,10 @@ def Plot_All_filterfrequencies(Set):
 
     print(end - start)
     
-Cases1 = ['R04','R35','R03','R06','R37'] #'R01',
-Cases2 = ['R05','R15','R28','R36','R12','R32']
+Cases1 = ['R01','R04','R35','R03','R06','R37'] #Daniel
+Cases2 = ['R05','R15','R28','R36','R12','R32'] #Thomas
 
-for case in Cases1:
+for case in Cases2:
     
   Plot_All_filterfrequencies(case)
 
