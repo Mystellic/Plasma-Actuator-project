@@ -305,7 +305,8 @@ def main():
     
     
     #Change PA1 as a string to PA2 or PA3 to look at those instead
-    ThisPA = 'PA1' 
+    ThisPA = 'PA3' 
+    currentInfo = info3
     
     pictureArray = FileToArray(ReadData(ThisPA))
 
@@ -328,7 +329,7 @@ def main():
     '''
     Threshold_pics = 'Images_after_Re_subtraction\\ThresholdPictures\\'
     pictures2 = slicing(pictureArray)
-    pictures = ReadData(Threshold_pics + 'ThresholdPA1')  #Change to PA1, PA2, PA3
+    pictures = ReadData(Threshold_pics + 'Threshold' + ThisPA)  #Change to PA1, PA2, PA3
     pictures1 = arrayconvert(pictures)
 
     ArrayCorrected, Final = standarddevi(indexofmax(gradient(pictures1)))
@@ -353,16 +354,37 @@ def main():
     Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
   
     
-    DeltaTransition = FinalDeltaTransition(Averagedtransition,info1)  #Change to info1 or info2 or info3 
+    DeltaTransition = FinalDeltaTransition(Averagedtransition,currentInfo)  #Change to info1 or info2 or info3 
     #print('The Delta Transition are:',DeltaTransition,'cm')
     #print()
     #print(DeltaTransition.shape)
    # print()
     
     
-    frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12 = PrePlotTables(info1,DeltaTransition)
+    frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12 = PrePlotTables(currentInfo,DeltaTransition)
 
 
+#Together Picture
+    plt.plot(frequency4,delta4,'ro', label = '4kV')
+    plt.plot(frequency4,delta4, 'r')
+             
+    plt.plot(frequency6,delta6,'bo', label = '6kV')
+    plt.plot(frequency6,delta6, 'b')
+    
+    plt.plot(frequency8,delta8,'go', label = '8kV')
+    plt.plot(frequency8,delta8, 'g')
+    
+    plt.plot(frequency10,delta10,'co', label = '10kV')
+    plt.plot(frequency10,delta10, 'c')
+    
+    plt.plot(frequency12,delta12,'mo', label = '12kV')
+    plt.plot(frequency12,delta12, 'm')
+    
+    plt.legend()
+    plt.show()
+
+#Seperate pictures
+'''
     plt.plot(frequency4,delta4)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Delta Transition (cm)')
@@ -399,7 +421,12 @@ def main():
     #plt.title('Voltage = 12V')
     plt.savefig(ThisPA + '_12')
     plt.close()
-    
+'''
+
+
+
+
+
 '''
     plt.figure
     plt.subplot(231)
