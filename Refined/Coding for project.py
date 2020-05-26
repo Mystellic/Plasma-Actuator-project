@@ -305,9 +305,9 @@ def main():
     
     
     #Change PA1 as a string to PA2 or PA3 to look at those instead
-    ThisPA = 'PA3' 
-    currentInfo = info3
-    Together = True
+    ThisPA = 'PA2' 
+    currentInfo = info2
+    Together = False
 
     pictureArray = FileToArray(ReadData(ThisPA))
 
@@ -398,48 +398,58 @@ def main():
 
     #Seperate pictures
     else: 
-        plt.plot(frequency4,delta4)
+        plt.plot(frequency4,delta4,'ro')
+        plt.plot(frequency4,delta4,'r')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Delta Transition (cm)')
-        plt.title('Voltage = 4kV')
+        #plt.title('Voltage = 4kV')
         plt.gca().invert_yaxis()
-        #plt.savefig(ThisPA + '_4')
-        plt.show()
+        plt.savefig(ThisPA + '_4')
+        plt.close()
+        #plt.show()
         #plt.clf()
         
-        plt.plot(frequency6,delta6)
+        plt.plot(frequency6,delta6,'ro')
+        plt.plot(frequency6,delta6,'r')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Delta Transition (cm)')
-        plt.title('Voltage = 6kV')
+        #plt.title('Voltage = 6kV')
         plt.gca().invert_yaxis()
-        #plt.savefig(ThisPA + '_6')
-        plt.show()
+        plt.savefig(ThisPA + '_6')
+        plt.close()
+        #plt.show()
         #plt.clf()
         
-        plt.plot(frequency8,delta8)
+        plt.plot(frequency8,delta8, 'ro')
+        plt.plot(frequency8,delta8, 'r')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Delta Transition (cm)')
-        plt.title('Voltage = 8kV')
+        #plt.title('Voltage = 8kV')
         plt.gca().invert_yaxis()
-        #plt.savefig(ThisPA + '_8')
-        plt.show()
+        plt.savefig(ThisPA + '_8')
+        plt.close()
+        #plt.show()
         #plt.clf()
     
     
-        plt.plot(frequency10,delta10)
+        plt.plot(frequency10,delta10,'ro')
+        plt.plot(frequency10,delta10,'r')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Delta Transition (cm)')
-        plt.title('Voltage = 10kV')
+        #plt.title('Voltage = 10kV')
         plt.gca().invert_yaxis()
-        #plt.savefig(ThisPA + '_10')
-        plt.show()
+        plt.savefig(ThisPA + '_10')
+        plt.close()
+        #plt.show()
         #plt.clf()
         
         
-        plt.plot(frequency12,delta12)
+        plt.plot(frequency12,delta12,'ro')
+        plt.plot(frequency12,delta12,'r')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Delta Transition (cm)')
         #plt.title('Voltage = 12V')
+        plt.gca().invert_yaxis()
         plt.savefig(ThisPA + '_12')
         plt.close()
         
