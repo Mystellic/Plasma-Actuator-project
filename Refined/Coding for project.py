@@ -78,7 +78,7 @@ def CleanCorrection(pictureArray,cleanInfo,dirtyInfo):
     for dirty in dirtyInfo:
         for clean in cleanInfo:
             if dirty[1] == clean[1]:
-                newArray = pictureArray[int(dirty[0])] - pictureArray[int(clean[0])]
+                newArray = pictureArray[int(clean[0])] - pictureArray[int(dirty[0])]
                 correctedArray.append(newArray)
                 
         #check which clean case needs to be subtracted 'Unfinished'
@@ -306,7 +306,7 @@ def main():
     
     #Change PA1 as a string to PA2 or PA3 to look at those instead
 
-    ThisPA = 'PA3' 
+    ThisPA = 'PA1' 
     
 #<<<<<<< HEAD
     
@@ -333,7 +333,7 @@ def main():
     '''
     Threshold_pics = 'Images_after_Re_subtraction\\ThresholdPictures\\'
     pictures2 = slicing(pictureArray)
-    pictures = ReadData(Threshold_pics + 'ThresholdPA3')  #Change to PA1, PA2, PA3
+    pictures = ReadData(Threshold_pics + 'ThresholdPA1')  #Change to PA1, PA2, PA3
     pictures1 = arrayconvert(pictures)
 
     ArrayCorrected, Final = standarddevi(indexofmax(gradient(pictures1)))
@@ -358,7 +358,7 @@ def main():
     Averagedtransition = np.array(Averagedtransition).reshape((len(pictures1),1))
   
 
-    DeltaTransition = FinalDeltaTransition(Averagedtransition,info3)  #Change to info1 or info2 or info3 
+    DeltaTransition = FinalDeltaTransition(Averagedtransition,info1)  #Change to info1 or info2 or info3 
 #<<<<<<< HEAD
     print('The Delta Transition are:',DeltaTransition,'cm')
     print()
@@ -366,7 +366,7 @@ def main():
     print()
     
     
-    frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12 = PrePlotTables(info3,DeltaTransition)
+    frequency4,frequency6,frequency8,frequency10,frequency12,delta4,delta6,delta8,delta10,delta12 = PrePlotTables(info1,DeltaTransition)
 #=======
     #print('The Delta Transition are:',DeltaTransition,'cm')
     #print()
@@ -380,7 +380,8 @@ def main():
     plt.plot(frequency4,delta4)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Delta Transition (cm)')
-    #plt.title('Voltage = 4kV')
+    plt.title('Voltage = 4kV')
+    plt.gca().invert_yaxis()
     #plt.savefig(ThisPA + '_4')
     plt.show()
     #plt.clf()
@@ -388,7 +389,8 @@ def main():
     plt.plot(frequency6,delta6)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Delta Transition (cm)')
-    #plt.title('Voltage = 6kV')
+    plt.title('Voltage = 6kV')
+    plt.gca().invert_yaxis()
     #plt.savefig(ThisPA + '_6')
     plt.show()
     #plt.clf()
@@ -396,7 +398,8 @@ def main():
     plt.plot(frequency8,delta8)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Delta Transition (cm)')
-    #plt.title('Voltage = 8kV')
+    plt.title('Voltage = 8kV')
+    plt.gca().invert_yaxis()
     #plt.savefig(ThisPA + '_8')
     plt.show()
     #plt.clf()
@@ -405,7 +408,8 @@ def main():
     plt.plot(frequency10,delta10)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Delta Transition (cm)')
-    #plt.title('Voltage = 10kV')
+    plt.title('Voltage = 10kV')
+    plt.gca().invert_yaxis()
     #plt.savefig(ThisPA + '_10')
     plt.show()
     #plt.clf()
@@ -414,7 +418,8 @@ def main():
     plt.plot(frequency12,delta12)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Delta Transition (cm)')
-    #plt.title('Voltage = 12V')
+    plt.title('Voltage = 12V')
+    plt.gca().invert_yaxis()
     #plt.savefig(ThisPA + '_12')
     plt.show()
     plt.close()
